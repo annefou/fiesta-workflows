@@ -51,13 +51,13 @@ scripts/run-canonical.sh <chain>
 
 ## FIESTA chain reference
 
-| Chain | Tools used | Canonical numbers (from FORRT nanopubs) |
-|---|---|---|
-| decrop-reproduction | planktonclas-inference | CNN top-1 = 0.8634 on Decrop's test split |
-| bio-stacking | foscat-features × 3, planktonclas-inference × 2, scattering-stacking | Stacked rare-recall = 0.5608 (+8.4 percentage points vs CNN) |
-| astro-synthesis | foscat-synthesis (pure synthesis on HEALPix) | LSS map synthesis matches power-spectrum and scattering stats |
-| sst-gap-filling | foscat-synthesis (HEALPix gap-filling) | RMSE improvement vs spherical-harmonics baseline |
-| sst-wgs84-gap-filling | foscat-synthesis (WGS84-resampled HEALPix gap-filling) | RMSE comparison sphere vs WGS84 |
+| Chain | Tools used | Published canonical | Galaxy workflow result | Status |
+|---|---|---|---|---|
+| **decrop-reproduction** | planktonclas-inference | CNN top-1 = 0.8634 | **0.8634** (4-decimal match) | ✅ verified |
+| **astro-synthesis** | foscat-synthesis (pure synthesis on HEALPix) | scat-coefficient match 99.6% | **99.89%** (within run variance) | ✅ verified |
+| bio-stacking | foscat-features × 3, planktonclas-inference × 2, scattering-stacking | Stacked rare-recall = 0.5608 (+8.4 pp vs CNN 0.4770) | _running_ | 🔄 in progress |
+| sst-gap-filling | foscat-synthesis (HEALPix gap-filling) | FOSCAT RMSE 0.989 K (91.4% improvement over spherical-harmonics) | — | ⏳ needs CMEMS data |
+| sst-wgs84-gap-filling | foscat-synthesis (WGS84-resampled HEALPix gap-filling) | nside=128 sphere 1333 mK → WGS84 1165 mK (+12.6%) | — | ⏳ needs CMEMS data |
 
 ## Downstream: Galaxy Training Network
 
