@@ -1,0 +1,19 @@
+- doc: Tier 1 smoke test — workflow runs end-to-end on synthetic fixtures.
+  job:
+    model_archive:
+      class: File
+      path: test-data/model.tar.gz
+    images_archive:
+      class: File
+      path: test-data/images.zip
+    split_file:
+      class: File
+      path: test-data/split.txt
+  outputs:
+    predictions:
+      asserts:
+        has_size:
+          # NPZ output is non-trivially-sized (synthetic 6-image, 3-class:
+          # ~1 KB compressed). Allow a wide range to cover platform variation.
+          min: 200
+          max: 100000

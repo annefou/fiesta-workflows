@@ -1,0 +1,42 @@
+class: GalaxyWorkflow
+label: FIESTA — Decrop et al. 2025 CNN baseline reproduction
+doc: |
+  Reproduces the CNN inference step of Decrop et al. 2025
+  (10.3389/fmars.2025.1699781): runs the published EfficientNetV2-B0
+  phytoplankton classifier on a set of FlowCam images using the
+  planktonclas pipeline (10-crop test-time augmentation by default).
+
+  Output is a single NPZ with per-image softmax probabilities,
+  schema-compatible with the cnn_predictions_*.npz files consumed by
+  the bio-stacking workflow.
+
+  Origin: github.com/annefou/fiesta-decrop-reproduction
+  Canonical CNN top-1 accuracy on Decrop's test split: 0.8634
+  (verified locally; matches published result to 0.003 percentage point).
+
+inputs:
+  model_archive:
+    type: data
+    label: planktonclas model archive (.tar.gz with ckpts/, conf.json, dataset_files/)
+  images_archive:
+    type: data
+    label: Image archive (.zip), images referenced by relative path in the split file
+  split_file:
+    type: data
+    label: Split file with one 'image_path label' per line
+
+steps:
+  cnn_predictions:
+    tool_id: planktonclas_inference
+    in:
+      model_archive: model_archive
+      images_archive: images_archive
+      split_file: split_file
+      top_K: {default: 0}
+      crop_num: {default: 10}
+    out:
+      - out_planktonclas_inference_predictions
+
+outputs:
+  predictions:
+    outputSource: cnn_predictions/out_planktonclas_inference_predictions

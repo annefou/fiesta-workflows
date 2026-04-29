@@ -1,0 +1,61 @@
+name: Test FIESTA Galaxy workflows
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+jobs:
+  smoke-test:
+    name: Tier 1 smoke test (${{ matrix.workflow }})
+    runs-on: ubuntu-24.04
+    strategy:
+      fail-fast: false
+      matrix:
+        workflow:
+          - decrop-reproduction
+          - astro-synthesis
+          - sst-gap-filling
+          - sst-wgs84-gap-filling
+          - bio-stacking
+    steps:
+      - name: Checkout fiesta-workflows
+        uses: actions/checkout@v4
+        with:
+          path: fiesta-workflows
+
+      - name: Checkout NordicESMhub/galaxy-tools (for FIESTA tool definitions)
+        uses: actions/checkout@v4
+        with:
+          repository: NordicESMhub/galaxy-tools
+          path: galaxy-tools
+
+      - name: Set up Python 3.11
+        uses: actions/setup-python@v6
+        with:
+          python-version: '3.11'
+
+      - name: Install planemo
+        run: pip install planemo
+
+      - name: Run smoke test for ${{ matrix.workflow }}
+        working-directory: fiesta-workflows/workflows/${{ matrix.workflow }}
+        run: |
+          if [ ! -f "${{ matrix.workflow }}.gxwf.yml" ]; then
+            echo "Workflow ${{ matrix.workflow }} not yet implemented — skipping."
+            exit 0
+          fi
+          planemo test \
+            --extra_tools "$GITHUB_WORKSPACE/galaxy-tools/tools" \
+            --no_dependency_resolution \
+            "${{ matrix.workflow }}.gxwf.yml"
+
+      - name: Upload test report
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: test-report-${{ matrix.workflow }}
+          path: |
+            fiesta-workflows/workflows/${{ matrix.workflow }}/tool_test_output.html
+            fiesta-workflows/workflows/${{ matrix.workflow }}/tool_test_output.json
+          if-no-files-found: ignore
