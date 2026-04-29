@@ -1,0 +1,67 @@
+class: GalaxyWorkflow
+label: FIESTA-SST — scattering-transform gap-filling on HEALPix maps
+doc: |
+  Reproduces the SST cloud-gap-filling chain from
+  github.com/annefou/fiesta-scattering-sst: an L3S microwave SST
+  observation has cloud gaps; an L4 gap-free product provides reference
+  scattering statistics. FOSCAT updates the cloudy pixels to match the
+  L4 statistics while keeping observed pixels fixed.
+
+  Inputs are pre-resampled to standard HEALPix (assuming a perfect
+  sphere). The companion sst-wgs84-gap-filling workflow uses HEALPix
+  resampled to the WGS84 ellipsoid.
+
+  Comparable scientifically against a spherical-harmonics baseline; the
+  scattering result reduces RMSE in cloudy regions vs the L4 truth.
+
+  Method reference: Delouis et al. 2022, A&A 668, A122
+  (10.1051/0004-6361/202244566)
+
+inputs:
+  target_map:
+    type: data
+    doc: Reference SST map (L4 gap-free product, HEALPix)
+  starting_map:
+    type: data
+    doc: Starting SST map (L3S + spherical-harmonics baseline filling clouds)
+  eval_mask:
+    type: data
+    doc: Ocean mask (1=ocean pixel, 0=land/ice) — restricts where stats are computed
+  update_mask:
+    type: data
+    doc: Cloud mask (1=cloudy, 0=observed) — restricts which pixels FOSCAT can modify
+  norient:
+    type: integer
+    default: 4
+  kernelsz:
+    type: integer
+    default: 3
+  nsteps:
+    type: integer
+    default: 300
+  seed:
+    type: integer
+    default: 1234
+
+steps:
+  synthesis:
+    tool_id: foscat_synthesis
+    in:
+      target_map: target_map
+      starting_map: starting_map
+      eval_mask: eval_mask
+      update_mask: update_mask
+      domain: {default: healpix}
+      norient: norient
+      kernelsz: kernelsz
+      nsteps: nsteps
+      seed: seed
+    out:
+      - out_foscat_synthesis_synthesis
+      - out_foscat_synthesis_results
+
+outputs:
+  filled_map:
+    outputSource: synthesis/out_foscat_synthesis_synthesis
+  results_json:
+    outputSource: synthesis/out_foscat_synthesis_results

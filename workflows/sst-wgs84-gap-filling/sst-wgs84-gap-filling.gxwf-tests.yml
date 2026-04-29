@@ -1,0 +1,24 @@
+- doc: |
+    Tier 1 smoke test — same DAG as sst-gap-filling but with the
+    WGS84-resampled fixtures (synthetic at this stage; real WGS84 maps
+    are produced by healpix-geo upstream). Exercises the same healpix +
+    grd_mask code path.
+  job:
+    target_map:    {class: File, path: test-data/target.npy}
+    starting_map:  {class: File, path: test-data/starting.npy}
+    eval_mask:     {class: File, path: test-data/eval_mask.npy}
+    update_mask:   {class: File, path: test-data/update_mask.npy}
+    norient: 4
+    kernelsz: 3
+    nsteps: 20
+    seed: 1234
+  outputs:
+    filled_map:
+      asserts:
+        has_size:
+          min: 100
+          max: 100000
+    results_json:
+      asserts:
+        has_text:
+          text: '"used_update_mask": true'

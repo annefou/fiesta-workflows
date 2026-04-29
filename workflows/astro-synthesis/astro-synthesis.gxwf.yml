@@ -1,0 +1,56 @@
+class: GalaxyWorkflow
+label: FIESTA-astro — scattering-transform synthesis on HEALPix maps
+doc: |
+  Reproduces the astrophysical pure-synthesis chain from
+  github.com/annefou/fiesta-scattering-astro: starting from random
+  Gaussian noise, FOSCAT iterates pixel values until the synthesized
+  map's multi-scale scattering statistics match a target reference
+  (a Large Scale Structure cosmological map on HEALPix).
+
+  This is *pure synthesis* mode — only the target reference is supplied.
+  The output is visually distinct from the target but shares the same
+  scattering statistics, validating the claim that scattering transforms
+  capture non-Gaussian texture statistics beyond what the power spectrum
+  describes.
+
+  Method reference: Delouis et al. 2022, A&A 668, A122
+  (10.1051/0004-6361/202244566)
+
+  Demo data origin: FOSCAT_DEMO repository (LSS_map_nside128.npy)
+
+inputs:
+  target_map:
+    type: data
+    doc: HEALPix map (.npy, 1D array of length 12*nside^2)
+  norient:
+    type: integer
+    default: 4
+  kernelsz:
+    type: integer
+    default: 3
+  nsteps:
+    type: integer
+    default: 300
+  seed:
+    type: integer
+    default: 1234
+
+steps:
+  synthesis:
+    tool_id: foscat_synthesis
+    in:
+      target_map: target_map
+      domain: {default: healpix}
+      norient: norient
+      kernelsz: kernelsz
+      nsteps: nsteps
+      seed: seed
+    out:
+      - out_foscat_synthesis_synthesis
+      - out_foscat_synthesis_results
+
+outputs:
+  synthesized_map:
+    outputSource: synthesis/out_foscat_synthesis_synthesis
+  results_json:
+    outputSource: synthesis/out_foscat_synthesis_results

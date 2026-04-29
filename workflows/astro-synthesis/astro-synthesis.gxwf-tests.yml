@@ -1,0 +1,23 @@
+- doc: |
+    Tier 1 smoke test — pure synthesis on a tiny NSIDE=4 (192-pixel)
+    HEALPix Gaussian random field. No starting map, no masks.
+    Exercises the foscat-synthesis tool's healpix domain + random-init
+    code path.
+  job:
+    target_map:
+      class: File
+      path: test-data/target.npy
+    norient: 4
+    kernelsz: 3
+    nsteps: 20
+    seed: 1234
+  outputs:
+    synthesized_map:
+      asserts:
+        has_size:
+          min: 100
+          max: 100000
+    results_json:
+      asserts:
+        has_text:
+          text: '"scat_improvement_pct"'

@@ -24,11 +24,23 @@ jobs:
         with:
           path: fiesta-workflows
 
-      - name: Checkout NordicESMhub/galaxy-tools (for FIESTA tool definitions)
+      - name: Checkout annefou/galaxy-tools fork
         uses: actions/checkout@v4
         with:
-          repository: NordicESMhub/galaxy-tools
+          repository: annefou/galaxy-tools
           path: galaxy-tools
+          fetch-depth: 0       # we need the four feature branches
+          ref: master
+
+      - name: Assemble all 4 FIESTA tools into one directory
+        run: |
+          mkdir -p $GITHUB_WORKSPACE/fiesta-tools
+          cd galaxy-tools
+          for b in scattering-stacking planktonclas-inference foscat-features foscat-synthesis; do
+            # Each branch has a tool subdir whose name matches the branch.
+            git archive "origin/$b" "tools/$b" | tar -x -C $GITHUB_WORKSPACE/fiesta-tools --strip-components=1
+          done
+          ls -la $GITHUB_WORKSPACE/fiesta-tools
 
       - name: Set up Python 3.11
         uses: actions/setup-python@v6
@@ -46,7 +58,7 @@ jobs:
             exit 0
           fi
           planemo test \
-            --extra_tools "$GITHUB_WORKSPACE/galaxy-tools/tools" \
+            --extra_tools "$GITHUB_WORKSPACE/fiesta-tools" \
             --no_dependency_resolution \
             "${{ matrix.workflow }}.gxwf.yml"
 
