@@ -4,3 +4,4 @@ tool_test_output.json
 __pycache__/
 .DS_Store
 plnmotmp*
+scripts/canonical/_*_run/
