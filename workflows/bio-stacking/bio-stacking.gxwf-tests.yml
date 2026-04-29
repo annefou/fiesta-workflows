@@ -23,7 +23,11 @@
     model_archive:
       class: File
       path: test-data/model.tar.gz
-    rare_class_threshold: 1
+    # threshold must be > train_count of any class for that class to be
+    # "rare". The fixture has 1 image per class, so threshold=2 makes all
+    # 3 classes rare and rare_idx is non-empty (avoiding an IndexError
+    # in scattering-stacking.py:188).
+    rare_class_threshold: 2
     stacking_C: 1.0
     stacking_max_iter: 100
   outputs:
