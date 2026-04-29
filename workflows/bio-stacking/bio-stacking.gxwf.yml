@@ -1,0 +1,123 @@
+class: GalaxyWorkflow
+label: FIESTA-bio — scattering-stacking reproduction
+doc: |
+  Reproduces the FIESTA-bio chain from
+  github.com/annefou/fiesta-scattering-bio: combine Decrop et al. 2025's
+  EfficientNetV2-B0 phytoplankton classifier (CNN softmax) with
+  multi-scale scattering features computed via FOSCAT, then stack the
+  two via a class-weighted logistic-regression meta-classifier trained
+  on val and evaluated on test.
+
+  Six tool invocations across three FIESTA tools:
+    foscat-features × 3 (train_balanced, val, test splits)
+    planktonclas-inference × 2 (val, test splits)
+    scattering-stacking × 1 (combines all five NPZs)
+
+  Canonical result on Decrop's test split (the +8.4 percentage points
+  headline number from the FORRT nanopub):
+    Stacked rare-class recall: 0.5608  (vs CNN alone: 0.4770)
+    Stacked top-1: 0.8562
+    Oracle ceiling (hard-switch): 0.8768
+
+inputs:
+  images_archive:
+    type: data
+  train_balanced_split:
+    type: data
+  val_split:
+    type: data
+  test_split:
+    type: data
+  classes_file:
+    type: data
+  model_archive:
+    type: data
+
+  rare_class_threshold:
+    type: integer
+    default: 200
+  stacking_C:
+    type: float
+    default: 1.0
+  stacking_max_iter:
+    type: integer
+    default: 2000
+
+steps:
+  features_train:
+    tool_id: foscat_features
+    in:
+      images_archive: images_archive
+      split_file: train_balanced_split
+      target_size: {default: 64}
+      norient: {default: 8}
+      kernelsz: {default: 3}
+    out:
+      - out_foscat_features_features
+
+  features_val:
+    tool_id: foscat_features
+    in:
+      images_archive: images_archive
+      split_file: val_split
+      target_size: {default: 64}
+      norient: {default: 8}
+      kernelsz: {default: 3}
+    out:
+      - out_foscat_features_features
+
+  features_test:
+    tool_id: foscat_features
+    in:
+      images_archive: images_archive
+      split_file: test_split
+      target_size: {default: 64}
+      norient: {default: 8}
+      kernelsz: {default: 3}
+    out:
+      - out_foscat_features_features
+
+  cnn_val:
+    tool_id: planktonclas_inference
+    in:
+      model_archive: model_archive
+      images_archive: images_archive
+      split_file: val_split
+      top_K: {default: 0}
+      crop_num: {default: 10}
+    out:
+      - out_planktonclas_inference_predictions
+
+  cnn_test:
+    tool_id: planktonclas_inference
+    in:
+      model_archive: model_archive
+      images_archive: images_archive
+      split_file: test_split
+      top_K: {default: 0}
+      crop_num: {default: 10}
+    out:
+      - out_planktonclas_inference_predictions
+
+  stacking:
+    tool_id: scattering_stacking
+    in:
+      features_train_npz: features_train/out_foscat_features_features
+      features_val_npz:   features_val/out_foscat_features_features
+      features_test_npz:  features_test/out_foscat_features_features
+      cnn_val_npz:        cnn_val/out_planktonclas_inference_predictions
+      cnn_test_npz:       cnn_test/out_planktonclas_inference_predictions
+      classes_file:       classes_file
+      train_split_file:   train_balanced_split
+      C:                  stacking_C
+      max_iter:           stacking_max_iter
+      rare_class_threshold: rare_class_threshold
+    out:
+      - out_scattering_stacking_results_json
+      - out_scattering_stacking_stacking_model
+
+outputs:
+  results:
+    outputSource: stacking/out_scattering_stacking_results_json
+  trained_model:
+    outputSource: stacking/out_scattering_stacking_stacking_model

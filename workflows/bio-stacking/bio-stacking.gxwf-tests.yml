@@ -1,0 +1,38 @@
+- doc: |
+    Tier 1 smoke test — runs the 6-step bio DAG on tiny synthetic
+    fixtures (9 images across 3 classes, 3 splits of 3 images each,
+    untrained Keras model, NORIENT=8/KERNELSZ=3/target_size=64
+    matching the FIESTA-bio config). Validates the wiring; numbers
+    produced are gibberish.
+  job:
+    images_archive:
+      class: File
+      path: test-data/images.zip
+    train_balanced_split:
+      class: File
+      path: test-data/train.txt
+    val_split:
+      class: File
+      path: test-data/val.txt
+    test_split:
+      class: File
+      path: test-data/test.txt
+    classes_file:
+      class: File
+      path: test-data/classes.txt
+    model_archive:
+      class: File
+      path: test-data/model.tar.gz
+    rare_class_threshold: 1
+    stacking_C: 1.0
+    stacking_max_iter: 100
+  outputs:
+    results:
+      asserts:
+        has_text:
+          text: '"top1"'
+    trained_model:
+      asserts:
+        has_size:
+          min: 200
+          max: 200000
