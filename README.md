@@ -64,3 +64,8 @@ scripts/run-canonical.sh <chain>
 Once Tier 2 verified, these workflows will be ported into
 [Galaxy Training Network](https://training.galaxyproject.org/) tutorials.
 This repo is the dev/test staging ground; GTN is the publication channel.
+
+## License
+
+Released under the [MIT License](LICENSE) — same as the FIESTA chain
+repos this workflow set reproduces.
