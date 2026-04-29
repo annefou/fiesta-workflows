@@ -57,9 +57,14 @@ jobs:
             echo "Workflow ${{ matrix.workflow }} not yet implemented — skipping."
             exit 0
           fi
+          # Use conda resolution: scattering-stacking needs scikit-learn/joblib
+          # via its <requirement> block. The FOSCAT-based tools and
+          # planktonclas-inference also declare minimal conda deps (python,
+          # pip, numpy, pillow) and pip-install heavier deps in <command>.
+          # Conda resolution covers both patterns.
           planemo test \
             --extra_tools "$GITHUB_WORKSPACE/fiesta-tools" \
-            --no_dependency_resolution \
+            --conda_dependency_resolution \
             "${{ matrix.workflow }}.gxwf.yml"
 
       - name: Upload test report
