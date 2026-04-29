@@ -1,0 +1,136 @@
+{
+  "@context": "https://doi.org/10.5063/schema/codemeta-2.0",
+  "@type": "SoftwareSourceCode",
+  "version": "0.1.0",
+  "name": "FIESTA Galaxy workflows — scattering-transform reproductions on Galaxy",
+  "description": "Galaxy workflows (gxformat2) that wire the four FIESTA Galaxy tools (foscat-features, foscat-synthesis, planktonclas-inference, scattering-stacking) together to reproduce each FIESTA-OSCARS scattering-transform chain end-to-end: cosmological LSS map synthesis (astro), sea-surface temperature gap-filling on standard and WGS84 HEALPix (sst, sst-wgs84), Decrop et al. 2025 CNN baseline reproduction (decrop), and the bio-stacking chain that combines the CNN softmax with FOSCAT scattering features via a class-weighted logistic-regression meta-classifier. Two-tier verification: planemo smoke tests on synthetic fixtures (Tier 1) and canonical-numbers reproduction on real FIESTA datasets (Tier 2). Designed to be portable to the Galaxy Training Network and WorkflowHub.",
+  "license": "https://spdx.org/licenses/MIT",
+  "codeRepository": "https://github.com/annefou/fiesta-workflows",
+  "dateCreated": "2026-04-29",
+  "datePublished": "2026-04-29",
+  "programmingLanguage": [
+    "gxformat2 (YAML)",
+    "Python"
+  ],
+  "runtimePlatform": [
+    "Galaxy",
+    "planemo"
+  ],
+  "author": [
+    {
+      "@type": "Person",
+      "givenName": "Anne",
+      "familyName": "Fouilloux",
+      "@id": "https://orcid.org/0000-0002-1784-2920",
+      "affiliation": {
+        "@type": "Organization",
+        "name": "LifeWatch ERIC"
+      }
+    }
+  ],
+  "keywords": [
+    "Galaxy",
+    "WorkflowHub",
+    "gxformat2",
+    "scattering transform",
+    "FOSCAT",
+    "FIESTA-OSCARS",
+    "FAIR",
+    "reproducible research",
+    "HEALPix",
+    "plankton classification",
+    "sea surface temperature",
+    "astrophysics"
+  ],
+  "referencePublication": [
+    {
+      "@type": "ScholarlyArticle",
+      "name": "Scattering transform applied to the CMB: new approach for component separation",
+      "author": [
+        { "@type": "Person", "givenName": "Jean-Marc", "familyName": "Delouis" },
+        { "@type": "Person", "givenName": "Erwan", "familyName": "Allys" },
+        { "@type": "Person", "givenName": "Emmanuel", "familyName": "Gauvrit" },
+        { "@type": "Person", "givenName": "François", "familyName": "Boulanger" }
+      ],
+      "isPartOf": { "@type": "Periodical", "name": "Astronomy & Astrophysics" },
+      "datePublished": "2022",
+      "identifier": "https://doi.org/10.1051/0004-6361/202244566"
+    },
+    {
+      "@type": "ScholarlyArticle",
+      "name": "Automated image classification workflow for phytoplankton monitoring",
+      "author": [
+        { "@type": "Person", "givenName": "Wout",     "familyName": "Decrop" },
+        { "@type": "Person", "givenName": "Rune",     "familyName": "Lagaisse" },
+        { "@type": "Person", "givenName": "Jonas",    "familyName": "Mortelmans" },
+        { "@type": "Person", "givenName": "Cristian", "familyName": "Muñiz" },
+        { "@type": "Person", "givenName": "Ignacio",  "familyName": "Heredia" },
+        { "@type": "Person", "givenName": "Amanda",   "familyName": "Calatrava" },
+        { "@type": "Person", "givenName": "Klaas",    "familyName": "Deneudt" }
+      ],
+      "isPartOf": { "@type": "Periodical", "name": "Frontiers in Marine Science" },
+      "datePublished": "2025",
+      "identifier": "https://doi.org/10.3389/fmars.2025.1699781"
+    }
+  ],
+  "isBasedOn": [
+    {
+      "@type": "SoftwareSourceCode",
+      "name": "FIESTA Scattering Bio",
+      "codeRepository": "https://github.com/annefou/fiesta-scattering-bio",
+      "identifier": "https://doi.org/10.5281/zenodo.19687112"
+    },
+    {
+      "@type": "SoftwareSourceCode",
+      "name": "FIESTA Decrop reproduction",
+      "codeRepository": "https://github.com/annefou/fiesta-decrop-reproduction"
+    },
+    {
+      "@type": "SoftwareSourceCode",
+      "name": "FIESTA Scattering Astro",
+      "codeRepository": "https://github.com/annefou/fiesta-scattering-astro"
+    },
+    {
+      "@type": "SoftwareSourceCode",
+      "name": "FIESTA Scattering SST",
+      "codeRepository": "https://github.com/annefou/fiesta-scattering-sst"
+    },
+    {
+      "@type": "SoftwareSourceCode",
+      "name": "FIESTA Scattering SST HEALPix-Geo (WGS84)",
+      "codeRepository": "https://github.com/annefou/fiesta-scattering-sst-healpix-geo"
+    },
+    {
+      "@type": "SoftwareApplication",
+      "name": "scattering-stacking — Galaxy tool",
+      "url": "https://github.com/NordicESMhub/galaxy-tools/pull/79"
+    },
+    {
+      "@type": "SoftwareApplication",
+      "name": "planktonclas-inference — Galaxy tool",
+      "url": "https://github.com/NordicESMhub/galaxy-tools/pull/80"
+    },
+    {
+      "@type": "SoftwareApplication",
+      "name": "foscat-features — Galaxy tool",
+      "url": "https://github.com/NordicESMhub/galaxy-tools/pull/81"
+    },
+    {
+      "@type": "SoftwareApplication",
+      "name": "foscat-synthesis — Galaxy tool",
+      "url": "https://github.com/NordicESMhub/galaxy-tools/pull/82"
+    }
+  ],
+  "softwareRequirements": [
+    {
+      "@type": "SoftwareApplication",
+      "name": "Galaxy",
+      "url": "https://galaxyproject.org/"
+    },
+    {
+      "@type": "SoftwareApplication",
+      "name": "planemo",
+      "url": "https://planemo.readthedocs.io/"
+    }
+  ]
+}
